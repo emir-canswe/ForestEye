@@ -74,6 +74,12 @@ async def run_pipeline():
             )
             
             db.add(new_risk)
+            db.flush() # To get the id for new_risk
+            
+            # Dispatch Notifications
+            from app.notifications.dispatcher import NotificationDispatcher
+            dispatcher = NotificationDispatcher()
+            dispatcher.dispatch_for_risk(db, new_risk, cell)
             
         db.commit()
         logger.info("Pipeline completed successfully.")
