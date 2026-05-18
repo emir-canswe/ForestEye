@@ -23,8 +23,14 @@ app.add_middleware(
 def health_check():
     return {"status": "ok", "message": "API is running"}
 
-# TODO: Include routers
-# from app.api.routes import risk, fires, subscribers
-# app.include_router(risk.router, prefix="/v1/risk", tags=["Risk Haritası"])
-# app.include_router(fires.router, prefix="/v1/fires", tags=["Aktif Yangınlar"])
-# app.include_router(subscribers.router, prefix="/v1/subscribe", tags=["Abonelik"])
+# Routers
+from app.api.routes import risk, fires, subscribers
+from app.pipeline.scheduler import start_scheduler
+
+@app.on_event("startup")
+async def startup_event():
+    start_scheduler()
+
+app.include_router(risk.router, prefix="/v1/risk", tags=["Risk Haritası"])
+app.include_router(fires.router, prefix="/v1/fires", tags=["Aktif Yangınlar"])
+app.include_router(subscribers.router, prefix="/v1/subscribe", tags=["Abonelik"])
