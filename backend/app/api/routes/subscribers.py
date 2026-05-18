@@ -3,11 +3,12 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.models.db.models import Subscriber, Subscription, GridCell
 from app.models.schemas.subscribers import SubscribeRequest, SubscribeResponse
+from app.core.security import get_api_key
 
 router = APIRouter()
 
 @router.post("/", response_model=SubscribeResponse)
-def subscribe(request: SubscribeRequest, db: Session = Depends(get_db)):
+def subscribe(request: SubscribeRequest, db: Session = Depends(get_db), api_key: str = Depends(get_api_key)):
     """
     Kullanıcıyı belirli bölgeler (GridCell) için bildirimlere abone yapar.
     """
